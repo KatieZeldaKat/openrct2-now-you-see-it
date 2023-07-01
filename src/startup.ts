@@ -1,6 +1,6 @@
 // @ts-ignore
 import * as info from "./info.js";
-import { window } from "./window";
+import { createWindow } from "./window";
 import { tool } from "./window";
 
 
@@ -24,7 +24,7 @@ function onClickMenuItem()
 	}
 	else
 	{
-		ui.openWindow(window);
+		ui.openWindow(createWindow());
 		ui.activateTool(tool);
 	}
 }
