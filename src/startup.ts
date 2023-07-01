@@ -1,5 +1,7 @@
 // @ts-ignore
 import * as info from "./info.js";
+import { window } from "./window";
+import { tool } from "./window";
 
 
 export function startup()
@@ -14,5 +16,15 @@ export function startup()
 
 function onClickMenuItem()
 {
-	park.postMessage("Now you see it!");
+	var foundWindow: Window = ui.getWindow(info.name);
+	if (foundWindow != null)
+	{
+		foundWindow.bringToFront();
+		ui.activateTool(tool);
+	}
+	else
+	{
+		ui.openWindow(window);
+		ui.activateTool(tool);
+	}
 }
