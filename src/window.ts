@@ -6,12 +6,12 @@ const tileSize = 32;
 
 var selectStart: CoordsXY;
 var visible: boolean = false;
-var trackVisible: boolean = false;
-var entranceVisible: boolean = false;
-var smallSceneryVisible: boolean = false;
-var largeSceneryVisible: boolean = false;
-var footpathVisible: boolean = false;
-var parkFenceVisible: boolean = false;
+var trackFiltered: boolean = false;
+var entranceFiltered: boolean = false;
+var smallSceneryFiltered: boolean = false;
+var largeSceneryFiltered: boolean = false;
+var footpathFiltered: boolean = false;
+var parkFenceFiltered: boolean = false;
 
 
 export function createWindow(): WindowDesc
@@ -51,68 +51,68 @@ export function createWindow(): WindowDesc
         },{
             type: "checkbox",
             text: "Track",
-            isChecked: trackVisible,
+            isChecked: trackFiltered,
             x: 10,
             y: 70,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                trackVisible = isChecked;
+                trackFiltered = isChecked;
             },
         },{
             type: "checkbox",
             text: "Entrances",
-            isChecked: entranceVisible,
+            isChecked: entranceFiltered,
             x: 130,
             y: 70,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                entranceVisible = isChecked;
+                entranceFiltered = isChecked;
             },
         },{
             type: "checkbox",
             text: "Small Scenery",
-            isChecked: smallSceneryVisible,
+            isChecked: smallSceneryFiltered,
             x: 10,
             y: 90,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                smallSceneryVisible = isChecked;
+                smallSceneryFiltered = isChecked;
             },
         },{
             type: "checkbox",
             text: "Large Scenery",
-            isChecked: largeSceneryVisible,
+            isChecked: largeSceneryFiltered,
             x: 130,
             y: 90,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                largeSceneryVisible = isChecked;
+                largeSceneryFiltered = isChecked;
             },
         },{
             type: "checkbox",
             text: "Footpath",
-            isChecked: footpathVisible,
+            isChecked: footpathFiltered,
             x: 10,
             y: 110,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                footpathVisible = isChecked;
+                footpathFiltered = isChecked;
             },
         },{
             type: "checkbox",
             text: "Park Fences",
-            isChecked: parkFenceVisible,
+            isChecked: parkFenceFiltered,
             x: 130,
             y: 110,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                parkFenceVisible = isChecked;
+                parkFenceFiltered = isChecked;
             },
         },{
             type: "button",
@@ -168,7 +168,7 @@ function createTool(): ToolDesc
             {
                 for (var y = selected.leftTop.y; y <= selected.rightBottom.y; y += tileSize)
                 {
-                    setTileVisibility(map.getTile(x / tileSize, y / tileSize));
+                    setTileVisibility(x / tileSize, y / tileSize);
                 }
             }
         },
@@ -187,9 +187,97 @@ function createTool(): ToolDesc
 }
 
 
-function setTileVisibility(tile: Tile)
+function setTileVisibility(x: number, y: number)
 {
-    park.postMessage(`(${tile.x}, ${tile.y})`);
+    var tile: Tile = map.getTile(x, y);
+    tile.elements.forEach((element) =>{
+        if (element.type === "track")
+        {
+            if (trackFiltered)
+            {
+                setElementVisibility(element);
+            }
+        }
+        else if (element.type === "entrance")
+        {
+            if (entranceFiltered)
+            {
+                setElementVisibility(element);
+            }
+        }
+        else if (element.type === "small_scenery" ||
+                element.type === "banner" ||
+                element.type === "wall")
+        {
+            if (smallSceneryFiltered)
+            {
+                setElementVisibility(element);
+            }
+        }
+        else if (element.type === "large_scenery")
+        {
+            if (largeSceneryFiltered)
+            {
+                setElementVisibility(element);
+            }
+        }
+        else if (element.type === "footpath")
+        {
+            if (footpathFiltered)
+            {
+                setElementVisibility(element);
+            }
+        }
+        else if (element.type === "surface")
+        {
+            if (parkFenceFiltered)
+            {
+                setParkFenceVisibility(element, x, y);
+            }
+        }
+    });
+}
+
+
+function setElementVisibility(element: TileElement)
+{
+    element.isHidden = !visible;
+}
+
+
+function setParkFenceVisibility(element: SurfaceElement, x: number, y: number)
+{
+    if (visible && !element.hasOwnership)
+    {
+        var ownedLand: boolean[] = [
+            hasOwnership(x, y + 1), // Up
+            hasOwnership(x + 1, y), // Right
+            hasOwnership(x, y - 1), // Down
+            hasOwnership(x - 1, y), // Left
+        ];
+
+        // Convert bit array to integer in form of [Left][Down][Right][Up] - ranges from [0, 15]
+        var parkFences: number = 0;
+        ownedLand.forEach((owned, index) => {
+            if (owned)
+            {
+                parkFences += 2 ** index;
+            }
+        })
+
+        element.parkFences = parkFences;
+    }
+    else
+    {
+        element.parkFences = 0
+    }
+}
+
+
+function hasOwnership(x: number, y: number): boolean
+{
+    var tileElements = map.getTile(x, y).elements.filter(element => element.type == "surface");
+    return (tileElements[0] as SurfaceElement).hasOwnership;
 }
 
 
