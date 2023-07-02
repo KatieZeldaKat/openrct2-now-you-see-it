@@ -1,7 +1,6 @@
 // @ts-ignore
 import * as info from "./info.js";
-import { createWindow } from "./window";
-import { tool } from "./window";
+import { createWindow, tool } from "./window";
 
 
 export function startup()

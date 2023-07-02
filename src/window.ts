@@ -1,9 +1,9 @@
 // @ts-ignore
 import * as info from "./info.js";
 import { VisibilityFilter } from "./data";
+import { processSelectedArea } from "./actions";
 
 export const tool: ToolDesc = createTool();
-const tileSize = 32;
 
 var selectStart: CoordsXY;
 var visible: boolean = false;
@@ -161,19 +161,7 @@ function createTool(): ToolDesc
             selectStart = getMapCoords(e.mapCoords);
         },
         onUp(_) {
-            var selected = ui.tileSelection.range;
-            if (selected == null)
-            {
-                return;
-            }
-
-            for (var x = selected.leftTop.x; x <= selected.rightBottom.x; x += tileSize)
-            {
-                for (var y = selected.leftTop.y; y <= selected.rightBottom.y; y += tileSize)
-                {
-                    setTileVisibility(x / tileSize, y / tileSize);
-                }
-            }
+            processSelectedArea(visible, filter);
         },
         onMove(e) {
             if (e.isDown)
@@ -187,100 +175,6 @@ function createTool(): ToolDesc
             }
         }
     };
-}
-
-
-function setTileVisibility(x: number, y: number)
-{
-    var tile: Tile = map.getTile(x, y);
-    tile.elements.forEach((element) =>{
-        if (element.type === "track")
-        {
-            if (filter.track)
-            {
-                setElementVisibility(element);
-            }
-        }
-        else if (element.type === "entrance")
-        {
-            if (filter.entrance)
-            {
-                setElementVisibility(element);
-            }
-        }
-        else if (element.type === "small_scenery" ||
-                element.type === "banner" ||
-                element.type === "wall")
-        {
-            if (filter.smallScenery)
-            {
-                setElementVisibility(element);
-            }
-        }
-        else if (element.type === "large_scenery")
-        {
-            if (filter.largeScenery)
-            {
-                setElementVisibility(element);
-            }
-        }
-        else if (element.type === "footpath")
-        {
-            if (filter.footpath)
-            {
-                setElementVisibility(element);
-            }
-        }
-        else if (element.type === "surface")
-        {
-            if (filter.parkFence)
-            {
-                setParkFenceVisibility(element, x, y);
-            }
-        }
-    });
-}
-
-
-function setElementVisibility(element: TileElement)
-{
-    element.isHidden = !visible;
-}
-
-
-function setParkFenceVisibility(element: SurfaceElement, x: number, y: number)
-{
-    if (visible && !element.hasOwnership)
-    {
-        var ownedLand: boolean[] = [
-            hasOwnership(x, y + 1), // Up
-            hasOwnership(x + 1, y), // Right
-            hasOwnership(x, y - 1), // Down
-            hasOwnership(x - 1, y), // Left
-        ];
-
-        // Convert bit array to integer in form of [Left][Down][Right][Up] - ranges from [0, 15]
-        var parkFences: number = 0;
-        ownedLand.forEach((owned, index) => {
-            if (owned)
-            {
-                parkFences += 2 ** index;
-            }
-        })
-
-        element.parkFences = parkFences;
-    }
-    else
-    {
-        element.parkFences = 0
-    }
-}
-
-
-function hasOwnership(x: number, y: number): boolean
-{
-    var tileElements = map.getTile(x, y).elements.filter(element => element.type == "surface");
-    return (tileElements[0] as SurfaceElement).hasOwnership;
 }
 
 
