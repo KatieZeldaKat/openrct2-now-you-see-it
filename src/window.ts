@@ -1,17 +1,20 @@
 // @ts-ignore
 import * as info from "./info.js";
+import { VisibilityFilter } from "./data";
 
 export const tool: ToolDesc = createTool();
 const tileSize = 32;
 
 var selectStart: CoordsXY;
 var visible: boolean = false;
-var trackFiltered: boolean = false;
-var entranceFiltered: boolean = false;
-var smallSceneryFiltered: boolean = false;
-var largeSceneryFiltered: boolean = false;
-var footpathFiltered: boolean = false;
-var parkFenceFiltered: boolean = false;
+var filter: VisibilityFilter = {
+    track: false,
+    entrance: false,
+    smallScenery: false,
+    largeScenery: false,
+    footpath: false,
+    parkFence: false,
+};
 
 
 export function createWindow(): WindowDesc
@@ -51,68 +54,68 @@ export function createWindow(): WindowDesc
         },{
             type: "checkbox",
             text: "Track",
-            isChecked: trackFiltered,
+            isChecked: filter.track,
             x: 10,
             y: 70,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                trackFiltered = isChecked;
+                filter.track = isChecked;
             },
         },{
             type: "checkbox",
             text: "Entrances",
-            isChecked: entranceFiltered,
+            isChecked: filter.entrance,
             x: 130,
             y: 70,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                entranceFiltered = isChecked;
+                filter.entrance = isChecked;
             },
         },{
             type: "checkbox",
             text: "Small Scenery",
-            isChecked: smallSceneryFiltered,
+            isChecked: filter.smallScenery,
             x: 10,
             y: 90,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                smallSceneryFiltered = isChecked;
+                filter.smallScenery = isChecked;
             },
         },{
             type: "checkbox",
             text: "Large Scenery",
-            isChecked: largeSceneryFiltered,
+            isChecked: filter.largeScenery,
             x: 130,
             y: 90,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                largeSceneryFiltered = isChecked;
+                filter.largeScenery = isChecked;
             },
         },{
             type: "checkbox",
             text: "Footpath",
-            isChecked: footpathFiltered,
+            isChecked: filter.footpath,
             x: 10,
             y: 110,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                footpathFiltered = isChecked;
+                filter.footpath = isChecked;
             },
         },{
             type: "checkbox",
             text: "Park Fences",
-            isChecked: parkFenceFiltered,
+            isChecked: filter.parkFence,
             x: 130,
             y: 110,
             height: 20,
             width: 110,
             onChange(isChecked) {
-                parkFenceFiltered = isChecked;
+                filter.parkFence = isChecked;
             },
         },{
             type: "button",
@@ -193,14 +196,14 @@ function setTileVisibility(x: number, y: number)
     tile.elements.forEach((element) =>{
         if (element.type === "track")
         {
-            if (trackFiltered)
+            if (filter.track)
             {
                 setElementVisibility(element);
             }
         }
         else if (element.type === "entrance")
         {
-            if (entranceFiltered)
+            if (filter.entrance)
             {
                 setElementVisibility(element);
             }
@@ -209,28 +212,28 @@ function setTileVisibility(x: number, y: number)
                 element.type === "banner" ||
                 element.type === "wall")
         {
-            if (smallSceneryFiltered)
+            if (filter.smallScenery)
             {
                 setElementVisibility(element);
             }
         }
         else if (element.type === "large_scenery")
         {
-            if (largeSceneryFiltered)
+            if (filter.largeScenery)
             {
                 setElementVisibility(element);
             }
         }
         else if (element.type === "footpath")
         {
-            if (footpathFiltered)
+            if (filter.footpath)
             {
                 setElementVisibility(element);
             }
         }
         else if (element.type === "surface")
         {
-            if (parkFenceFiltered)
+            if (filter.parkFence)
             {
                 setParkFenceVisibility(element, x, y);
             }
