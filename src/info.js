@@ -1,6 +1,6 @@
 export const name = "Now You See It";
 export const authors = [ "Katherine Norton (KatieZeldaKat)" ];
-export const version = "0.1.0";
+export const version = "1.0.0";
 export const license = "MIT";
 
 export const filename = `now-you-see-it-v${version}.js`;
