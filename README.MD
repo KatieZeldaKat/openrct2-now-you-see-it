@@ -1,6 +1,6 @@
 # OpenRCT2 - Now You See It!
 
-![UI for the "Now You See It!" plugin](.github/interface.png)
+![UI for the "Now You See It!" plugin](https://github.com/KatieZeldaKat/openrct2-now-you-see-it/blob/v1.0.0/.github/interface.png?raw=true)
 
 A plugin for OpenRCT2 that allows you to modify the visibility of map elements. After installation,
 you can show the above window by clicking and holding on the map button in the top left bar of the
@@ -26,7 +26,7 @@ If a checkbox is clicked, it will be affected by whatever change you are making 
 making a selection while the "Make Visible" button is pressed, then any checked items will be made
 visible while the non-checked items will not be affected in any way). This is shown here:
 
-![Gameplay with Track, Small Scenery, and Entrances made invisible](.github/filter.gif)
+![Gameplay with Track, Small Scenery, and Entrances made invisible](https://github.com/KatieZeldaKat/openrct2-now-you-see-it/blob/v1.0.0/.github/filter.gif?raw=true)
 
 ## Park Fences
 
@@ -35,7 +35,7 @@ addition to making elements visible/invisible. Note that park fences are handled
 surrounding any owned land in your park. Merely selecting the tiles you own next to any park fences
 will not affect their visibility!
 
-![Gameplay removing and restoring Park Fences](.github/park-fences.gif)
+![Gameplay removing and restoring Park Fences](https://github.com/KatieZeldaKat/openrct2-now-you-see-it/blob/v1.0.0/.github/park-fences.gif?raw=true)
 
 ## Re-activating the Selection Tool
 
@@ -44,7 +44,7 @@ click and drag to select what tiles you want to affect. However, it is possible 
 deactivate if you open another window that uses a different tool. Just click the button at the
 bottom of the window and the tool will re-enable itself.
 
-![Gameplay opening the land tool then re-activating the plugin tool](.github/activate-tool.gif)
+![Gameplay opening the land tool then re-activating the plugin tool](https://github.com/KatieZeldaKat/openrct2-now-you-see-it/blob/v1.0.0/.github/activate-tool.gif?raw=true)
 
 ## Multiplayer
 
@@ -53,7 +53,7 @@ the permission of "Modify Tile"** in order to perform any actions through this p
 not have the necessary permissions, an error message will display as you attempt to perform the
 action:
 
-![Error message saying "Can't do this... Permission denied (Modify Tile)"](.github/permission-denied.png)
+![Error message saying "Can't do this... Permission denied (Modify Tile)"](https://github.com/KatieZeldaKat/openrct2-now-you-see-it/blob/v1.0.0/.github/permission-denied.png?raw=true)
 
 # Installation
 
