@@ -1,16 +1,18 @@
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
-import { getConfigHome, getDocumentsFolder } from "platform-folders";
-import { filename } from "./src/info.js";
+import { exec } from "child_process";
+import { homedir } from "os";
+import { promisify } from "util";
+import { name, version } from "./src/info.js";
 
 
 const options =
 {
 	/**
-	 * Change the file name of the output file here.
+	 * The filename of the output, taken from info.js
 	 */
-	filename: filename,
+	filename: `${name}-v${version}.js`,
 
 	/**
 	 * Determines in what build mode the plugin should be build. The default here takes
@@ -30,19 +32,29 @@ const options =
  * > git update-index --no-skip-worktree rollup.config.js
  * ```
  */
-function getOutput()
+async function getOutput()
 {
 	if (options.build !== "development")
+	{
 		return `./dist/${options.filename}`;
-
-	const pluginPath = `OpenRCT2/plugin/${options.filename}`;
-	if (process.platform === "win32")
-	{
-		return `${getDocumentsFolder()}/${pluginPath}`;
 	}
-	else // for both Mac and Linux
+
+	const platform = process.platform;
+	const pluginPath = `OpenRCT2/plugin/${options.filename}`;
+
+	if (platform === "win32") // Windows
 	{
-		return `${getConfigHome()}/${pluginPath}`;
+		const { stdout } = await promisify(exec)("powershell -command \"[Environment]::GetFolderPath('MyDocuments')\"");
+		return `${stdout.trim()}/${pluginPath}`;
+	}
+	else if (platform === "darwin") // MacOS
+	{
+		return `${homedir()}/Library/Application Support/${pluginPath}`;
+	}
+	else // Linux
+	{
+		const configFolder = process.env.XDG_CONFIG_HOME || `${homedir()}/.config`;
+		return `${configFolder}/${pluginPath}`;
 	}
 }
 
@@ -53,7 +65,7 @@ function getOutput()
 const config = {
 	input: "./src/plugin.ts",
 	output: {
-		file: getOutput(),
+		file: await getOutput(),
 		format: "iife",
 		compact: true
 	},
