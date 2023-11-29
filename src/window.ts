@@ -3,7 +3,8 @@ import * as info from "./info.js";
 import { VisibilityFilter } from "./data";
 import { processSelectedArea } from "./actions";
 
-export const tool: ToolDesc = createTool();
+const tool: ToolDesc = createTool();
+const title: string = "Now You See It!";
 
 var selectStart: CoordsXY;
 var visible: boolean = false;
@@ -17,14 +18,29 @@ var filter: VisibilityFilter = {
 };
 
 
-export function createWindow(): WindowDesc
+export function focusWindow(): void
 {
+    var foundWindow: Window = ui.getWindow(info.name);
+	if (foundWindow != null)
+	{
+		foundWindow.bringToFront();
+	}
+	else
+	{
+		ui.openWindow(createWindow());
+	}
+}
+
+
+function createWindow(): WindowDesc
+{
+    ui.activateTool(tool);
     return {
         classification: info.name,
-        title: "Now You See It!",
+        title: title,
         colours: [ 5, 4 ],
         width: 250,
-        height: 170,
+        height: 130,
         widgets: [{
             type: "button",
             text: "Make Visible",
@@ -56,7 +72,7 @@ export function createWindow(): WindowDesc
             text: "Track",
             isChecked: filter.track,
             x: 10,
-            y: 70,
+            y: 65,
             height: 20,
             width: 110,
             onChange(isChecked) {
@@ -67,7 +83,7 @@ export function createWindow(): WindowDesc
             text: "Entrances",
             isChecked: filter.entrance,
             x: 130,
-            y: 70,
+            y: 65,
             height: 20,
             width: 110,
             onChange(isChecked) {
@@ -78,7 +94,7 @@ export function createWindow(): WindowDesc
             text: "Small Scenery",
             isChecked: filter.smallScenery,
             x: 10,
-            y: 90,
+            y: 85,
             height: 20,
             width: 110,
             onChange(isChecked) {
@@ -89,7 +105,7 @@ export function createWindow(): WindowDesc
             text: "Large Scenery",
             isChecked: filter.largeScenery,
             x: 130,
-            y: 90,
+            y: 85,
             height: 20,
             width: 110,
             onChange(isChecked) {
@@ -100,7 +116,7 @@ export function createWindow(): WindowDesc
             text: "Footpath",
             isChecked: filter.footpath,
             x: 10,
-            y: 110,
+            y: 105,
             height: 20,
             width: 110,
             onChange(isChecked) {
@@ -111,23 +127,12 @@ export function createWindow(): WindowDesc
             text: "Park Fences",
             isChecked: filter.parkFence,
             x: 130,
-            y: 110,
+            y: 105,
             height: 20,
             width: 110,
             onChange(isChecked) {
                 filter.parkFence = isChecked;
             },
-        },{
-            type: "button",
-            text: "Activate Selection Tool",
-            tooltip: "Activate tool to select desired surface tiles",
-            x: 10,
-            y: 140,
-            height: 20,
-            width: 230,
-            onClick() {
-                ui.activateTool(tool);
-            }
         },],
         onClose() {
             ui.tool?.cancel();
@@ -173,7 +178,10 @@ function createTool(): ToolDesc
                 ui.tileSelection.range = null;
                 ui.tileSelection.tiles = [ getMapCoords(e.mapCoords) ];
             }
-        }
+        },
+        onFinish() {
+            ui.getWindow(info.name)?.close
+        },
     };
 }
 

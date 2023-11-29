@@ -1,9 +1,8 @@
 /// <reference path="../lib/openrct2.d.ts" />
 
-import { startup } from "./startup";
-
 // @ts-ignore
 import * as info from "./info.js";
+import { startup } from "./startup";
 
 registerPlugin({
 	name: info.name,
