@@ -2,8 +2,8 @@ export const name = "now-you-see-it";
 export const authors = [ "Katherine Norton (KatieZeldaKat)" ];
 export const license = "MIT";
 
-export const version = "1.1.0";
-export const type = "remote";
+export const version = "1.2.0";
+export const type = "local";
 
 /**
  * The following field determines which OpenRCT2 API version to use. It's best to always target
